@@ -279,8 +279,6 @@
   layers configuration. You are free to put any user code."
   (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
   (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
-  (define-key evil-visual-state-map (kbd "j") 'evil-next-visual-line)
-  (define-key evil-visual-state-map (kbd "k") 'evil-previous-visual-line)
 
   (setq powerline-default-separator 'nil)
   (spaceline-compile)
