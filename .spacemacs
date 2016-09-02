@@ -51,6 +51,7 @@
 
      ;; other
      spell-checking
+     org
 
      ;; (shell :variables
      ;;        shell-default-height 30
