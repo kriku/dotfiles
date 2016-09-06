@@ -48,14 +48,12 @@
      ;; vcs
      version-control
      git
+     shell
 
      ;; other
      spell-checking
      org
 
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
      ;; syntax-checking
      )
    ;; List of additional packages that will be installed without being
@@ -117,7 +115,12 @@
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(leuven
+   dotspacemacs-themes '(hemisu-light
+                         whiteboard
+                         twilight-bright
+                         gandalf
+                         apropospriate-light
+                         leuven
                          default
                          monokai
                          solarized-light
@@ -278,8 +281,17 @@
   "Configuration function for user code.
   This function is called at the very end of Spacemacs initialization after
   layers configuration. You are free to put any user code."
+
+  (set-background-color "default")
+
   (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
   (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+
+
+  (add-hook 'eshell-mode-hook (lambda ()
+            (setq-local global-hl-line-mode nil)))
+  (add-hook 'term-mode-hook (lambda ()
+            (setq-local global-hl-line-mode nil)))
 
   (setq powerline-default-separator 'nil)
   (spaceline-compile)
@@ -298,6 +310,7 @@
     (setq-default css-indent-offset n) ; css-mode
     )
 
+
   ;;(add-hook 'java-mode-hook (lambda ()
   ;;                            (setq c-basic-offset 4)))
   ;; (setq-default evil-escape-key-sequence "C-c")
@@ -312,7 +325,7 @@
   (my-setup-indent 2)
   (load-file "~/.emacs.d/cyrillic-dvorak.el")
   (setq default-input-method "cyrillic-dvorak")
-  (setq-default truncate-lines nil)
+  (setq-default truncate-lines t)
 
   (defun line-above (arg)
     "Move to the next line and then opens a line."
@@ -324,6 +337,7 @@
       (indent-according-to-mode)))
 
   (define-key evil-normal-state-map (kbd "RET") 'line-above)
+  (evil-define-key 'insert term-raw-map (kbd "C-c C-c") 'evil-normal-state)
 
   (define-key evil-insert-state-map (kbd "C-c") 'evil-escape)
   (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
@@ -341,8 +355,9 @@
   (setq-default dotspacemacs-configuration-layers
                 '((auto-completion :variables
                                    auto-completion-enable-snippets-in-popup t))))
-(ispell-change-dictionary "english")
 
+
+(ispell-change-dictionary "english")
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
