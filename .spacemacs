@@ -282,8 +282,6 @@
   This function is called at the very end of Spacemacs initialization after
   layers configuration. You are free to put any user code."
 
-  (set-background-color "default")
-
   (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
   (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 
