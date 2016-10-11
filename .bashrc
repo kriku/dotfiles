@@ -125,3 +125,8 @@ export PATH="$PATH:$SCALA_HOME/bin"
 export ECLIPSE_HOME="/home/krikun/eclipse/jee-neon/eclipse"
 export PATH="$PATH:$ECLIPSE_HOME"
 
+
+export NVM_DIR="/home/krikun/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+
+export PATH="$PATH:/usr/share"

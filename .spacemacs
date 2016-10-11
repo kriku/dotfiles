@@ -35,9 +35,9 @@
      ;; languages
      c-c++
      emacs-lisp
-     ruby-on-rails
 
-     scala
+     (scala :variables
+            ensime-startup-snapshot-notification nil)
 
      ;; markup
      html
@@ -54,13 +54,17 @@
      spell-checking
      org
 
+     ;; private
+     no-dots
+
      ;; syntax-checking
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(lorem-ipsum)
+   dotspacemacs-additional-packages '(lorem-ipsum
+                                      xclip)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '(rainbow-delimiters)
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -115,20 +119,20 @@
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(hemisu-light
+   dotspacemacs-themes '(spacemacs-light
+                         monokai
                          whiteboard
                          twilight-bright
                          gandalf
                          apropospriate-light
                          leuven
                          default
-                         monokai
                          solarized-light
                          solarized-dark
                          zenburn
                          tao-yin
                          wombat
-                         spacemacs-light
+                         hemisu-light
                          spacemacs-dark)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
@@ -137,7 +141,6 @@
    dotspacemacs-default-font '("Source Code Pro"
                                :size 14
                                :weight normal
-                               :width normal
                                )
    ;; The leader key
    dotspacemacs-leader-key "SPC"
@@ -172,7 +175,7 @@
    dotspacemacs-display-default-layout nil
    ;; If non nil then the last auto saved layouts are resume automatically upon
    ;; start. (default nil)
-   dotspacemacs-auto-resume-layouts nil
+   dotspacemacs-auto-resume-layouts t
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
@@ -261,6 +264,7 @@
    dotspacemacs-whitespace-cleanup nil
    ))
 
+
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
   It is called immediately after `dotspacemacs/init'.  You are free to put almost
@@ -275,12 +279,16 @@
   ;; (custom-set-variables
   ;;  '(eclim-eclipse-dirs '("/opt/eclipse"))
   ;;  '(eclim-executable "/opt/eclipse/eclim"))
+
   )
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
   This function is called at the very end of Spacemacs initialization after
   layers configuration. You are free to put any user code."
+
+  ;; turn on xclip-mode (I'm use terminal version of emacs)
+  (xclip-mode 1)
 
   (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
   (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
@@ -293,6 +301,9 @@
 
   (setq powerline-default-separator 'nil)
   (spaceline-compile)
+
+  ;; (setq debug-on-error t)
+
 
   (defun my-setup-indent (n)
     ;; java/c/c++
@@ -321,9 +332,10 @@
   ;; indent 2 spaces width
   (setq tab-width 2)
   (my-setup-indent 2)
-  (load-file "~/.emacs.d/cyrillic-dvorak.el")
+  (load-file "~/.emacs.d/private/cyrillic-dvorak.el")
   (setq default-input-method "cyrillic-dvorak")
   (setq-default truncate-lines t)
+  ;; (setq ensime-completion-style 'auto-complete)
 
   (defun line-above (arg)
     "Move to the next line and then opens a line."
@@ -331,13 +343,20 @@
     (end-of-line)
     (open-line arg)
     (next-line 1)
-    (when newline-and-indent
-      (indent-according-to-mode)))
+  )
 
   (define-key evil-normal-state-map (kbd "RET") 'line-above)
+
+  (defun remove-background-color ()
+    "Useful for transparent terminal."
+    (unless (display-graphic-p (selected-frame))
+      (set-face-background 'default "unspecified-bg" (selected-frame))))
+
+  (remove-background-color)
+
   (evil-define-key 'insert term-raw-map (kbd "C-c C-c") 'evil-normal-state)
 
-  (define-key evil-insert-state-map (kbd "C-c") 'evil-escape)
+  (define-key evil-insert-state-map (kbd "C-c") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
   (define-key evil-insert-state-map (kbd "C-a") 'beginning-of-line-text)
   (define-key evil-insert-state-map (kbd "C-h") 'delete-backward-char)
@@ -347,6 +366,8 @@
   ;; (define-key evil-insert-state-map (kbd "k") 'evil-previous-visual-line)
   (evil-leader/set-key "," 'save-buffer)
 
+  (ispell-change-dictionary "english")
+
   ;; (global-auto-complete-mode +1)
   (add-hook 'ein:connect-mode-hook 'smartparens-mode)
   ;; (ac-set-trigger-key "TAB")
@@ -355,7 +376,6 @@
                                    auto-completion-enable-snippets-in-popup t))))
 
 
-(ispell-change-dictionary "english")
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -374,3 +394,10 @@
  ;; If there is more than one, they won't work right.
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ ;; '(sbt:prefer-nested-projects t)
+ )
