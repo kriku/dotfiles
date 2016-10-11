@@ -364,7 +364,12 @@
   ;; (set-face-attribute 'region nil :background "#ffc")
   ;; (evil-define-key 'insert (kbd "C-c") 'evil-normal-state)
   ;; (define-key evil-insert-state-map (kbd "k") 'evil-previous-visual-line)
+
+  ;; Custom key-binding
+
   (evil-leader/set-key "," 'save-buffer)
+  (evil-leader/set-key "q z" 'spacemacs/prompt-kill-emacs)
+  (evil-leader/set-key "q q" 'spacemacs/frame-killer)
 
   (ispell-change-dictionary "english")
 
