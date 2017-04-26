@@ -35,6 +35,7 @@
      ;; languages
      c-c++
      emacs-lisp
+     ;; eiffel
 
      (scala :variables
             ensime-startup-snapshot-notification nil)
@@ -44,6 +45,7 @@
      latex
      markdown
      yaml
+     graphviz
 
      ;; vcs
      version-control
@@ -56,6 +58,7 @@
 
      ;; private
      no-dots
+     ;; promela
 
      ;; syntax-checking
      )
@@ -139,7 +142,7 @@
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 14
+                               :size 18
                                :weight normal
                                )
    ;; The leader key
@@ -175,7 +178,7 @@
    dotspacemacs-display-default-layout nil
    ;; If non nil then the last auto saved layouts are resume automatically upon
    ;; start. (default nil)
-   dotspacemacs-auto-resume-layouts t
+   dotspacemacs-auto-resume-layouts nil
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
@@ -212,7 +215,7 @@
    dotspacemacs-loading-progress-bar nil
    ;; If non nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
-   dotspacemacs-fullscreen-at-startup nil
+   dotspacemacs-fullscreen-at-startup t
    ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
    dotspacemacs-fullscreen-use-non-native nil
@@ -247,7 +250,7 @@
    dotspacemacs-highlight-delimiters 'all
    ;; If non nil advises quit functions to keep server open when quitting.
    ;; (default nil)
-   dotspacemacs-persistent-server nil
+   dotspacemacs-persistent-server t
    ;; List of search tool executable names. Spacemacs uses the first installed
    ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
    ;; (default '("ag" "pt" "ack" "grep"))
@@ -275,17 +278,71 @@
   ;; (add-hook 'c-mode-hook 'ycmd-mode)
   ;; (setq browse-url-browser-function 'browse-url-generic
   ;;       browse-url-generic-program "chromium-browser")
-  (setq ispell-dictionary "english")
+  (setq-default ispell-program-name "aspell")
+  (setq ispell-dictionary "en")
+  (setq ispell-personal-dictionary "~/.dictionary")
   ;; (custom-set-variables
   ;;  '(eclim-eclipse-dirs '("/opt/eclipse"))
   ;;  '(eclim-executable "/opt/eclipse/eclim"))
 
+  (add-to-list 'default-frame-alist '(fullscreen . fullboth))
+
+  (push "/home/krikun/emacs/eiffel/" load-path)
+  (autoload 'eiffel-mode "eiffel" "Eiffel mode" nil t)
+
+  (setq auto-mode-alist
+        (append
+         (list (cons "\\.e$"  'eiffel-mode)
+               ;; (cons "\\.ace$"     'eiffel-mode)
+               ;; (cons "\\.other-extensions$"     'eiffel-mode)
+               )
+         auto-mode-alist))
+
+  (push "/home/krikun/emacs/promela-mode/" load-path)
+  (autoload 'promela-mode "promela-mode" "PROMELA mode" nil t)
+
+  (setq auto-mode-alist
+    (append
+      (list (cons "\\.promela$"  'promela-mode)
+      (cons "\\.spin$"     'promela-mode)
+      (cons "\\.pml$"      'promela-mode)
+      ;; (cons "\\.other-extensions$"     'promela-mode)
+            )
+      auto-mode-alist))
+
+  (add-hook 'promela-mode-hook
+            (lambda ()
+              (setq promela-block-indent 2)
+              (setq promela-selection-indent 0)
+              (setq promela-selection-option-indent 0)
+              (setq promela-tab-always-indent nil)
+              (setq promela-auto-match-delimiter nil)
+  ;;             ;; (local-set-key \"\\C-m\" 'promela-indent-newline-indent)
+
+              ;; (set (make-local-variable 'compile-command)
+              ;;       ;; emulate make's .c.o implicit pattern rule, but with
+              ;;       ;; different defaults for the CC, CPPFLAGS, and CFLAGS
+              ;;       ;; variables:
+              ;;       ;; $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $<
+              ;;       (let ((file (file-name-nondirectory buffer-file-name)))
+              ;;         (format "spin -a %s; gcc -o pan pan.c; ./pan -a"
+              ;;                 file)))
+              ))
   )
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
   This function is called at the very end of Spacemacs initialization after
   layers configuration. You are free to put any user code."
+
+  ;; Added to .spacemacs in the dotspacemacs/config section.
+  ;; (defun my-resize-margins ()
+  ;;   (let ((margin-size (/ (- (frame-width) 160) 2)))
+  ;;     (set-window-margins nil margin-size margin-size)))
+
+  ;; (add-hook 'window-configuration-change-hook #'my-resize-margins)
+  ;; (my-resize-margins)
+
 
   ;; turn on xclip-mode (I'm use terminal version of emacs)
   (xclip-mode 1)
@@ -332,7 +389,7 @@
   ;; indent 2 spaces width
   (setq tab-width 2)
   (my-setup-indent 2)
-  (load-file "~/.emacs.d/private/cyrillic-dvorak.el")
+  (load-file "~/emacs/cyrillic-dvorak.el")
   (setq default-input-method "cyrillic-dvorak")
   (setq-default truncate-lines t)
   ;; (setq ensime-completion-style 'auto-complete)
@@ -371,7 +428,7 @@
   (evil-leader/set-key "q z" 'spacemacs/prompt-kill-emacs)
   (evil-leader/set-key "q q" 'spacemacs/frame-killer)
 
-  (ispell-change-dictionary "english")
+  ;; (ispell-change-dictionary "english")
 
   ;; (global-auto-complete-mode +1)
   (add-hook 'ein:connect-mode-hook 'smartparens-mode)
@@ -404,5 +461,117 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- ;; '(sbt:prefer-nested-projects t)
- )
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(ansi-color-names-vector
+   ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(beacon-color "#F8BBD0")
+ '(compilation-message-face (quote default))
+ '(cua-global-mark-cursor-color "#2aa198")
+ '(cua-normal-cursor-color "#839496")
+ '(cua-overwrite-cursor-color "#b58900")
+ '(cua-read-only-cursor-color "#859900")
+ '(evil-emacs-state-cursor (quote ("#D50000" hbar)) t)
+ '(evil-insert-state-cursor (quote ("#D50000" bar)) t)
+ '(evil-normal-state-cursor (quote ("#F57F17" box)) t)
+ '(evil-visual-state-cursor (quote ("#66BB6A" box)) t)
+ '(evil-want-Y-yank-to-eol t)
+ '(fci-rule-character-color "#d9d9d9")
+ '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
+ '(highlight-indent-guides-auto-enabled nil)
+ '(highlight-symbol-colors
+   (--map
+    (solarized-color-blend it "#002b36" 0.25)
+    (quote
+     ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
+ '(highlight-symbol-foreground-color "#93a1a1")
+ '(highlight-tail-colors
+   (quote
+    (("#073642" . 0)
+     ("#546E00" . 20)
+     ("#00736F" . 30)
+     ("#00629D" . 50)
+     ("#7B6000" . 60)
+     ("#8B2C02" . 70)
+     ("#93115C" . 85)
+     ("#073642" . 100))))
+ '(hl-bg-colors
+   (quote
+    ("#7B6000" "#8B2C02" "#990A1B" "#93115C" "#3F4D91" "#00629D" "#00736F" "#546E00")))
+ '(hl-fg-colors
+   (quote
+    ("#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36")))
+ '(magit-diff-use-overlays nil)
+ '(nrepl-message-colors
+   (quote
+    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+ '(package-selected-packages
+   (quote
+    (graphviz-dot-mode hemisu-theme tao-theme zenburn-theme solarized-theme apropospriate-theme gandalf-theme twilight-bright-theme monokai-theme yaml-mode xterm-color xclip ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs pug-mode popwin persp-mode pcre2el paradox spinner orgit org-projectile org-present org org-pomodoro alert log4e gntp org-plus-contrib org-download org-bullets open-junk-file noflet neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum linum-relative link-hint less-css-mode info+ indent-guide ido-vertical-mode hydra hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-gitignore request helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight eshell-z eshell-prompt-extras esh-help ensime sbt-mode scala-mode emmet-mode elisp-slime-nav dumb-jump f s disaster diminish diff-hl define-word company-web web-completion-data company-statistics company-quickhelp pos-tip company-c-headers company-auctex company column-enforce-mode cmake-mode clean-aindent-mode clang-format bind-map bind-key auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed dash auctex aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build spacemacs-theme)))
+ '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
+ '(pos-tip-background-color "#073642")
+ '(pos-tip-foreground-color "#93a1a1")
+ '(safe-local-variable-values
+   (quote
+    ((eval when
+           (and
+            (buffer-file-name)
+            (file-regular-p
+             (buffer-file-name))
+            (string-match-p "^[^.]"
+                            (buffer-file-name)))
+           (unless
+               (featurep
+                (quote package-build))
+             (let
+                 ((load-path
+                   (cons "../package-build" load-path)))
+               (require
+                (quote package-build))))
+           (package-build-minor-mode)
+           (set
+            (make-local-variable
+             (quote package-build-working-dir))
+            (expand-file-name "../working/"))
+           (set
+            (make-local-variable
+             (quote package-build-archive-dir))
+            (expand-file-name "../packages/"))
+           (set
+            (make-local-variable
+             (quote package-build-recipes-dir))
+            default-directory)))))
+ '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
+ '(tabbar-background-color "#ffffff")
+ '(term-default-bg-color "#002b36")
+ '(term-default-fg-color "#839496")
+ '(vc-annotate-background "#0E0E0E")
+ '(vc-annotate-background-mode nil)
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#616161")
+     (40 . "#9D9D9D")
+     (60 . "#9D9D9D")
+     (80 . "#C2C2C2")
+     (100 . "#C2C2C2")
+     (120 . "#D9D9D9")
+     (140 . "#D9D9D9")
+     (160 . "#E8E8E8")
+     (180 . "#E8E8E8")
+     (200 . "#E8E8E8")
+     (220 . "#F0F0F0")
+     (240 . "#F0F0F0")
+     (260 . "#F0F0F0")
+     (280 . "#F6F6F6")
+     (300 . "#F6F6F6")
+     (320 . "#F6F6F6")
+     (340 . "#F9F9F9")
+     (360 . "#F9F9F9"))))
+ '(vc-annotate-very-old-color "#D9D9D9")
+ '(weechat-color-list
+   (quote
+    (unspecified "#002b36" "#073642" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#839496" "#657b83")))
+ '(xterm-color-names
+   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#eee8d5"])
+ '(xterm-color-names-bright
+   ["#002b36" "#cb4b16" "#586e75" "#657b83" "#839496" "#6c71c4" "#93a1a1" "#fdf6e3"]))
