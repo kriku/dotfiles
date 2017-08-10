@@ -34,11 +34,14 @@
 
      ;; languages
      c-c++
+     clojure
      emacs-lisp
+     haskell
+     ;; ruby
      ;; eiffel
 
-     (scala :variables
-            ensime-startup-snapshot-notification nil)
+     ;; (scala :variables
+     ;;        ensime-startup-snapshot-notification nil)
 
      ;; markup
      html
@@ -54,6 +57,9 @@
 
      ;; other
      spell-checking
+     ;;(spacemacs-langtool :variables
+     ;;          langtool-language-tool-jar "/home/krikun/langtool/languagetool-commandline.jar"
+     ;;          langtool-default-language "en-US")
      org
 
      ;; private
@@ -123,6 +129,7 @@
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(spacemacs-light
+                         solarized-dark
                          monokai
                          whiteboard
                          twilight-bright
@@ -131,7 +138,6 @@
                          leuven
                          default
                          solarized-light
-                         solarized-dark
                          zenburn
                          tao-yin
                          wombat
@@ -285,18 +291,42 @@
   ;;  '(eclim-eclipse-dirs '("/opt/eclipse"))
   ;;  '(eclim-executable "/opt/eclipse/eclim"))
 
+  ;; (add-to-list 'load-path "/home/krikun/emacs/writegood-mode/")
+  ;; (require 'writegood-mode)
+  ;; (global-set-key "\C-cg" 'writegood-mode)
+  ;; (global-set-key "\C-c\C-gg" 'writegood-grade-level)
+  ;; (global-set-key "\C-c\C-ge" 'writegood-reading-ease)
+
+  ;; (add-to-list 'load-path "/home/krikun/emacs/Emacs-langtool/")
+
+  ;; (require 'langtool)
+  ;; (setq langtool-language-tool-jar "/home/krikun/langtool/languagetool-commandline.jar")
+  ;; (setq langtool-default-language "en-US")
+  ;; (setq langtool-java-bin "/usr/bin/java")
+
   (add-to-list 'default-frame-alist '(fullscreen . fullboth))
 
-  (push "/home/krikun/emacs/eiffel/" load-path)
-  (autoload 'eiffel-mode "eiffel" "Eiffel mode" nil t)
+  ;;    (add-to-list 'auto-mode-alist '("\\.e\\'" . eiffel-mode))
+  ;;    (autoload 'eiffel-mode "eiffel" "Major mode for Eiffel programs" t)
 
-  (setq auto-mode-alist
-        (append
-         (list (cons "\\.e$"  'eiffel-mode)
-               ;; (cons "\\.ace$"     'eiffel-mode)
-               ;; (cons "\\.other-extensions$"     'eiffel-mode)
-               )
-         auto-mode-alist))
+  (push "/home/krikun/emacs/eiffel/" load-path)
+  (autoload 'eiffel-mode "eiffel" "Eiffel mode" t)
+  (add-to-list 'auto-mode-alist '("\\.e\\'" . eiffel-mode))
+
+  ;; (add-to-list 'load-path (expand-file-name "~/emacs/eiffel/"))
+  ;; (push "/home/krikun/emacs/eiffel/" load-path)
+  ;; (autoload 'eiffel-mode "eiffel" "Eiffel mode" t)
+
+  ;; (setq auto-mode-alist
+  ;;       (append
+  ;;        (list (cons "\\.e$"  'eiffel-mode))
+  ;;        auto-mode-alist))
+
+  (add-hook 'eiffel-mode-hook
+            (lambda ()
+              (setq eif-compile-command "se")
+              (setq eif-compile-options "c")
+              ))
 
   (push "/home/krikun/emacs/promela-mode/" load-path)
   (autoload 'promela-mode "promela-mode" "PROMELA mode" nil t)
@@ -305,9 +335,7 @@
     (append
       (list (cons "\\.promela$"  'promela-mode)
       (cons "\\.spin$"     'promela-mode)
-      (cons "\\.pml$"      'promela-mode)
-      ;; (cons "\\.other-extensions$"     'promela-mode)
-            )
+      (cons "\\.pml$"      'promela-mode))
       auto-mode-alist))
 
   (add-hook 'promela-mode-hook
@@ -399,17 +427,16 @@
     (interactive "p")
     (end-of-line)
     (open-line arg)
-    (next-line 1)
-  )
+    (next-line 1))
 
   (define-key evil-normal-state-map (kbd "RET") 'line-above)
 
-  (defun remove-background-color ()
-    "Useful for transparent terminal."
-    (unless (display-graphic-p (selected-frame))
-      (set-face-background 'default "unspecified-bg" (selected-frame))))
+  ;; (defun remove-background-color ()
+  ;;   "Useful for transparent terminal."
+  ;;   (unless (display-graphic-p (selected-frame))
+  ;;     (set-face-background 'default "unspecified-bg" (selected-frame))))
 
-  (remove-background-color)
+  ;; (remove-background-color)
 
   (evil-define-key 'insert term-raw-map (kbd "C-c C-c") 'evil-normal-state)
 
@@ -465,6 +492,8 @@
    [default default default italic underline success warning error])
  '(ansi-color-names-vector
    ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(ansi-term-color-vector
+   [unspecified "#FFFFFF" "#d15120" "#5f9411" "#d2ad00" "#6b82a7" "#a66bab" "#6b82a7" "#505050"])
  '(beacon-color "#F8BBD0")
  '(compilation-message-face (quote default))
  '(cua-global-mark-cursor-color "#2aa198")
@@ -507,7 +536,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (graphviz-dot-mode hemisu-theme tao-theme zenburn-theme solarized-theme apropospriate-theme gandalf-theme twilight-bright-theme monokai-theme yaml-mode xterm-color xclip ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs pug-mode popwin persp-mode pcre2el paradox spinner orgit org-projectile org-present org org-pomodoro alert log4e gntp org-plus-contrib org-download org-bullets open-junk-file noflet neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum linum-relative link-hint less-css-mode info+ indent-guide ido-vertical-mode hydra hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-gitignore request helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight eshell-z eshell-prompt-extras esh-help ensime sbt-mode scala-mode emmet-mode elisp-slime-nav dumb-jump f s disaster diminish diff-hl define-word company-web web-completion-data company-statistics company-quickhelp pos-tip company-c-headers company-auctex company column-enforce-mode cmake-mode clean-aindent-mode clang-format bind-map bind-key auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed dash auctex aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build spacemacs-theme)))
+    (rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby cider-spy clojure-snippets clj-refactor inflections edn multiple-cursors paredit peg cider-eval-sexp-fu cider seq queue clojure-mode intero flycheck hlint-refactor hindent helm-hoogle haskell-snippets company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode auctex-latexmk graphviz-dot-mode hemisu-theme tao-theme zenburn-theme solarized-theme apropospriate-theme gandalf-theme twilight-bright-theme monokai-theme yaml-mode xterm-color xclip ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs pug-mode popwin persp-mode pcre2el paradox spinner orgit org-projectile org-present org org-pomodoro alert log4e gntp org-plus-contrib org-download org-bullets open-junk-file noflet neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum linum-relative link-hint less-css-mode info+ indent-guide ido-vertical-mode hydra hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-gitignore request helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight eshell-z eshell-prompt-extras esh-help ensime sbt-mode scala-mode emmet-mode elisp-slime-nav dumb-jump f s disaster diminish diff-hl define-word company-web web-completion-data company-statistics company-quickhelp pos-tip company-c-headers company-auctex company column-enforce-mode cmake-mode clean-aindent-mode clang-format bind-map bind-key auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed dash auctex aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build spacemacs-theme)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
