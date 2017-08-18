@@ -451,7 +451,11 @@
 
   ;; Custom key-binding
 
+  (define-key evil-normal-state-map (kbd "g d") 'find-tag)
+  (define-key evil-normal-state-map (kbd "g D") 'spacemacs/jump-to-definition)
+
   (evil-leader/set-key "," 'save-buffer)
+  ;; (evil-leader/set-key "g T" 'find-tag)
   (evil-leader/set-key "q z" 'spacemacs/prompt-kill-emacs)
   (evil-leader/set-key "q q" 'spacemacs/frame-killer)
 
