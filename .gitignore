@@ -1,5 +1,7 @@
 *
 !.gitignore
 !.spacemacs
+!.spacemacs_win
 !.bashrc
 !.bash_aliases
+!emacsd.vbs
