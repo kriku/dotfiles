@@ -82,7 +82,7 @@ This function should only modify configuration layer settings."
 
      ;; automatic programming metrics
      (wakatime :variables
-               wakatime-api-key  "935d3d79-4cf7-4e95-a88c-9d135d7a1b55"
+               wakatime-api-key  (getenv "WAKATIME_API_KEY")
                ;; use the actual wakatime path
                wakatime-cli-path "C:/Python27/Scripts/wakatime")
      ;; ...
