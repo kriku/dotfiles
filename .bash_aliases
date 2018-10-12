@@ -1,5 +1,10 @@
 alias battery="grep POWER_SUPPLY_CAPACITY /sys/class/power_supply/BAT0/uevent"
 alias powerinfo="upower -i $(upower -e | grep BAT)"
+alias right="xrandr --output eDP1 --rotation right"
+alias left="xrandr --output eDP1 --rotation left"
+alias normal="xrandr --output eDP1 --rotation normal"
+alias night="xbacklight -set 1"
+alias hide="sed s/\\\\w/\\*/g"
 
 # A shortcut function that simplifies usage of xclip.
 # - Accepts input from either stdin (pipe), or params.
@@ -48,7 +53,8 @@ alias cbhs="cat $HISTFILE | tail -n 1 | cb"
 alias vi="vim"
 alias e="emacsclient -t"
 
-alias ll='ls -l --color=auto'
+alias l='ls -l --color=auto'
+alias ll=l
 # function ll() {
 #     if [ $(ls $1 -al | wc -l) -gt 40 ]; then
 #         ls $1 -al | less
@@ -56,3 +62,4 @@ alias ll='ls -l --color=auto'
 #         ls $1 -al --color
 #     fi
 # }
+alias mickup="adb backup $(date +%s).ab"
