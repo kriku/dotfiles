@@ -1,0 +1,21 @@
+Xft.dpi: 157
+Xft.antialias: true
+Xft.hinting: true
+Xft.rgba: rgb
+Xft.autohint: false
+Xft.hintstyle: hintslight
+Xft.lcdfilter: lcddefault
+
+XTerm.vt100.saveLines: 8192
+XTerm*visualBell:  True
+
+XTerm*utf8: 2
+XTerm*pointerColor: #16A085
+XTerm*faceName: Droid Sans Mono:style=Regular
+XTerm*faceSize: 11
+
+XTerm.vt100.metaSendsEscape: true
+
+XTerm.vt100.translations: #override \n\
+    Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
+    Ctrl Shift <Key>V: insert-selection(CLIPBOARD)
