@@ -1,0 +1,10 @@
+[Unit]
+Description=Arcadia Mount Service
+
+[Service]
+Type=simple
+ExecStart=%h/bin/arc mount -m %h/arcadia -S %h/store
+ExecStop=%h/bin/arc unmount %h/arcadia
+
+[Install]
+WantedBy=default.target

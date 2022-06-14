@@ -1,0 +1,8 @@
+[Unit]
+Description=Wallpaper monitor
+
+[Path]
+PathExists=/tmp/update_wallpaper
+
+[Install]
+WantedBy=default.target

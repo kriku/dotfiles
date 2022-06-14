@@ -1,0 +1,9 @@
+[Unit]
+Description=Wallpaper monitor
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/wallpaper_watch
+
+[Install]
+WantedBy=default.target
